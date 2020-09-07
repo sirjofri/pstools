@@ -1,0 +1,49 @@
+#!/bin/rc
+
+rfork
+ramfs
+
+fn usage{
+	echo 'usage: pstoc pagefrom pageto file.ps > output.ps' >[1=2]
+}
+
+~ $#* 3 || {
+	usage
+	exit usage
+}
+
+file=$*(3)
+pagefrom=$*(1)
+pageto=$*(2)
+
+pages=`{grep '^%%Pages: ' $file | sed -e 's/\(atend\)//g' -e 's/^%%Pages: //'}
+
+# extract pages
+sed -n '1,/^%%EndSetup/p' $file >/tmp/preamble
+sed -n '/^%%Trailer/,$p' $file >/tmp/postamble
+p=$pages
+while(! ~ $p 0){
+	sed -n '/^%%Page: '^$p^' '^$p^'/,/^%%EndPage: '^$p^' '^$p^'/p' $file >/tmp/$p
+	p=`{echo $p - 1 | bc}
+}
+
+# reorder pages
+cp /tmp/$pagefrom /tmp/toc
+p=$pagefrom
+while(! ~ $p $pageto){
+	cp /tmp/`{echo $p - 1 | bc} /tmp/$p
+	p=`{echo $p - 1 | bc}
+}
+cp /tmp/toc /tmp/$pageto
+rm /tmp/toc
+
+# fix page numbers
+p=$pages
+while(! ~ $p 0){
+	sed -e 's/^%%Page: .+ .+$/%%Page: '^$p^' '^$p^'/g' -e 's/^%%EndPage: .+ .+$/%%EndPage: '^$p^' '^$p^'/g' /tmp/$p > /tmp/new^$p
+	mv /tmp/new^$p /tmp/$p
+	p=`{echo $p - 1 | bc}
+}
+
+cat /tmp/preamble /tmp/^`{seq 1 $pages} /tmp/postamble
+
