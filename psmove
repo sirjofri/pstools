@@ -4,19 +4,29 @@ rfork
 ramfs
 
 fn usage{
-	echo 'usage: pstoc pagefrom pageto file.ps > output.ps' >[1=2]
+	echo 'usage: pstoc pagefrom pageto <input.ps >output.ps' >[1=2]
 }
 
-~ $#* 3 || {
+~ $#* 2 || {
 	usage
 	exit usage
 }
 
-file=$*(3)
 pagefrom=$*(1)
 pageto=$*(2)
 
+cat >/tmp/input.ps
+file=/tmp/input.ps
+
 pages=`{grep '^%%Pages: ' $file | sed -e 's/\(atend\)//g' -e 's/^%%Pages: //'}
+
+if(~ $pagefrom -*)
+	pagefrom=`{echo $pages $pagefrom | bc}
+if(~ $pageto -*)
+	pageto=`{echo $pages $pageto | bc}
+
+test $pagefrom -gt $pages && { usage; exit usage }
+test $pageto -gt $pages && { usage; exit usage }
 
 # extract pages
 sed -n '1,/^%%EndSetup/p' $file >/tmp/preamble
