@@ -1,0 +1,28 @@
+#!/bin/rc
+
+REFER=refer/refer
+
+rfork
+ramfs
+
+fn usage{
+	echo usage: `{basename $0} >[1=2]
+	exit usage
+}
+
+cat >/tmp/source
+
+SUMMARY=`"{
+	$REFER -e $* </tmp/source | sed -n -e '/^\.\]\</,/^\.\]\>/p'
+}
+
+echo '/^\$LIST\$$
+-,+j
+d
+i
+$LISTBIB$
+.
+w
+q' | ed /tmp/source
+
+cat /tmp/source | awk '/^\$LISTBIB\$$/ { system("echo -n \$SUMMARY"); } !/^\$LISTBIB\$$/ {print $0}' | $REFER $*

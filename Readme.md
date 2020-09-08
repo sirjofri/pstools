@@ -19,3 +19,18 @@ All other pages are renumbered to fit the moved page.
 	; psmove 6 2 <file.ps >output.ps
 
 `from` _must_ be greater than `to`!
+
+## Additional troff tools
+
+**Note:** I currently use me macros almost exclusively.
+Some of these scripts might not work properly with other macro packages.
+
+### `refx` — double references (troff)
+
+This troff preprocessor is able to produce double references with _refer_.
+This way you can have both footnotes _and_ bibliography, which is not possible with the ported refer.
+
+	# refx flags
+	; refx <file | troff ...
+
+refx will invoke refer two times (with and without the accumulate flag).
