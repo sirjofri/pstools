@@ -17,12 +17,12 @@ SUMMARY=`"{
 }
 
 echo '/^\$LIST\$$
--,+j
-d
-i
+-,+c
 $LISTBIB$
 .
 w
-q' | ed /tmp/source
+q' | ed /tmp/source >[2]/dev/null >[1=2]
 
-cat /tmp/source | awk '/^\$LISTBIB\$$/ { system("echo -n \$SUMMARY"); } !/^\$LISTBIB\$$/ {print $0}' | $REFER $*
+#cat /tmp/source | awk '/^\$LISTBIB\$$/ { system("echo -n \$SUMMARY"); } !/^\$LISTBIB\$$/ {print $0}' | $REFER -b $*
+cat /tmp/source | $REFER -b $* | awk '/^\$LISTBIB\$$/ { system("echo -n \$SUMMARY"); } !/^\$LISTBIB\$$/ {print $0}'
+#cat /tmp/source | $REFER -b $* | sed -e 's/^\$LISTBIB\$$/'^$"SUMMARY^'/g'
