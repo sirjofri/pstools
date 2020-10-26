@@ -1,0 +1,21 @@
+#!/bin/awk -f
+
+/^%%Page:/ {
+	printf "%%%%Page: %d %d\n", ++p, p
+}
+
+/^%%EndPage:/ {
+	printf "%%%%EndPage: %d %d\n", p, p
+}
+
+/^%%Pages:/ && p {
+	printf "%%%%Pages: %d\n", p
+}
+
+/^%%Pages:/ && !p {
+	print
+}
+
+!/^%%Page:/ && !/^%%EndPage:/ && !/^%%Pages:/ {
+	print
+}

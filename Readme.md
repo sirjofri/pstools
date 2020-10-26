@@ -15,10 +15,29 @@ Use this tool to move pages around.
 E. g. move the last page (table of contents) to the beginning, so we have a nicely formatted document with ordered pages.
 All other pages are renumbered to fit the moved page.
 
-	# psmove from to <file.ps > output.ps
+	# psmove from to <file.ps >output.ps
 	; psmove 6 2 <file.ps >output.ps
 
 `from` _must_ be greater than `to`!
+
+## `psmovem` — move pages around according to a map
+
+This tool can shuffle pages at will.
+It needs two parameters: _number of pages_ and a _mapping table_.
+
+The _mapping table_ is a comma separated list of page numbers.
+
+	# reorder a document with 5 pages
+	; psmovem 5 1,2,3,5,4 <file.ps >output.ps
+
+## `pspnumber` — renumber pages
+
+This tool takes postscript input and renumbers all pages sequentially.
+It can be used to clean up after moving pages around with `psmove`.
+
+It also fixes the `%%Pages:` page number attribute, but _only if_ it's set _after_ the pages.
+
+	; pspnumber <file.ps >output.ps
 
 ## Additional troff tools
 

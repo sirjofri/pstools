@@ -1,0 +1,63 @@
+#!/bin/rc
+
+fn usage{
+	echo 'usage: psmove pagenumber mapping' >[1=2]
+	echo '  mapping: 1,2,3,50,4,5,6' >[1=2]
+	exit usage
+}
+
+! ~ $#* 2 && usage
+
+pagenum=$1
+map=$2
+
+awk '
+BEGIN {
+	map="'$map'"
+	pagenum='$pagenum'
+	st="head"
+}
+/^%%EndSetup/ {
+	st="body"
+	head[h++] = $0
+	next
+}
+/^%%Trailer/ {
+	st="tail"
+}
+
+st=="head" {
+	head[h++] = $0
+}
+st=="tail" {
+	tail[t++] = $0
+}
+st=="body" && /^%%Page:/ {
+	page[p,count] = line
+	p++
+	line=0
+}
+st=="body" {
+	page[p,line++] = $0
+}
+
+END {
+	# end last page
+	page[p,count] = line
+
+	# output
+	for(i = 0; i < length(head); i++)
+		print head[i]
+
+	# output pages
+	split(map, arr, ",")
+	for(i = 0; i < length(arr); i++){
+		p = index(arr[i], "-") == 0 ? arr[i] : pagenum-arr[i]
+		for(k = 0; k < page[p,count]; k++)
+			print page[p,k]
+	}
+
+	for(i = 0; i < length(tail); i++)
+		print tail[i]
+}
+'

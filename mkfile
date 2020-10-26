@@ -1,11 +1,13 @@
 </$objtype/mkfile
 
 BIN=$home/bin/rc
-TARG=psmove refx
+TARG=\
+	refx\
+	psmove\
+	psmovem\
+	pspnumber\
 
-install:V:
-	for(i in $TARG)
-		mk $BIN/$i
+install:V: ${TARG:%=$BIN/%}
 
 $BIN/%: %
 	cp $stem $BIN/$stem
