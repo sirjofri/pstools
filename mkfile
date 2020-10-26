@@ -6,6 +6,7 @@ TARG=\
 	psmove\
 	psmovem\
 	pspnumber\
+	psnumseq\
 
 install:V: ${TARG:%=$BIN/%}
 

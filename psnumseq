@@ -1,0 +1,32 @@
+#!/bin/rc
+
+numpages=`{tail -1 < $1 | awk '{print $2}' }
+
+fn absnums{
+	f=`'='{echo $1}
+	if(~ $f(1) -*)
+		src=`{echo $numpages $f(1) | bc}
+	if not
+		src=$f(1)
+	if(~ $f(2) -*)
+		tgt=`{echo $numpages $f(2) -1 | bc}
+	if not
+		tgt=`{echo -1 + $f(2) | bc}
+}
+
+shift
+echo -n '' >/tmp/tmpfile
+{
+	echo 'a'
+	seq 1 $numpages
+	echo '.'
+	while(! ~ $#* 0){
+		absnums $1
+		echo $src^'m'^$tgt
+		shift
+	}
+	echo 'wq'
+} | ed - /tmp/tmpfile | cat >/dev/null
+
+nums=`{cat /tmp/tmpfile}
+echo $nums^',' | sed 's/,$//g;s/ //g'

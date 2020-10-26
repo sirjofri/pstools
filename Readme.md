@@ -30,6 +30,18 @@ The _mapping table_ is a comma separated list of page numbers.
 	# reorder a document with 5 pages
 	; psmovem 5 1,2,3,5,4 <file.ps >output.ps
 
+## `psnumseq` — create mapping table
+
+This tools provides a generator for mapping tables for `psmovem`.
+It uses a simple mapping syntax similar to rc shell redirections.
+
+	# move page 5 to 2, then the last page to 1
+	; psnumseq file.ps '5=2' '-0=1'
+	# the output can be directly used with psmovem
+	; psmovem «numpages» `{psnumseq file.ps '5=2' '-0=1'}
+
+Note that `0` is invalid while `-0` is valid! 
+
 ## `pspnumber` — renumber pages
 
 This tool takes postscript input and renumbers all pages sequentially.
