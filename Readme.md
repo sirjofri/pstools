@@ -97,4 +97,13 @@ To use this feature the `firstheader` variable needs to be set.
 
 Set variables like this:
 
-	; txt2ms -v 'firstheader=1' 'dontparse=1' <file.txt
+	; txt2ms -v 'firstheader=1' 'dontparse=1' < file.txt
+
+Using `txt2ms` allows the creation of tables of contents.
+The important lines are printed to stderr.
+
+	; txt2ms < file.txt | troff >[2]toc.ms
+
+The resulting `toc.ms` file can be included in the document.
+
+**Note:** You need to filter the output if you have errors/warnings!

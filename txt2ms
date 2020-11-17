@@ -13,6 +13,11 @@ function parsed(a){
 	return a
 }
 
+BEGIN {
+	print ".de XS\n.ds LQ \"\"\n.nr |i (\\\\$1i-1i)/3u\n.ie '\\\\$1'0' .tm .XL \\\\$1 \\\\*(LQ\\\\$2\\\\*(LQ \\\\n%\n.el .tm .XL \\\\$1 \\\\*(LQ\\h'\\\\n(|iu'\\\\*(SN\\0\\0\\\\$2\\\\*(LQ \\\\n%\n.."
+	print ".de XL\n.nr |i \\\\$1\n.ta \\\\n(LLuR\n.ie \\\\$1>1 \\\n\\{\\\n\\\\$2 \\a\\|\\|\\\\$3\n.vs 15pt\n.\\}\n.el \\\n\\{\\\n\\fB\\\\$2	\\|\\|\\\\$3\\fR\n.vs 25pt\n.\\}\n.."
+}
+
 firstheader && NR == 1 {
 	printf ".TL\n%s\n", parsed($0)
 	nextline = 1
@@ -22,8 +27,25 @@ $1 ~ /^#+$/ {
 	l = length($1)
 	$1 = ""
 	sub(/^[ \t]*/, "")
-	printf ".NH %d\n%s\n", l, parsed($0)
+	printf ".NH %d\n.LG\n%s\n.NL\n", l, parsed($0)
+	printf ".XS %d \"%s\"\n", l, parsed($0)
 	istitle = 1
+	nextline = 1
+}
+
+$1 ~ /^\$+$/ {
+	$1 = ""
+	sub(/^[ \t]*/, "")
+	printf ".SH\n.LG\n%s\n.NL\n", parsed($0)
+	printf ".XS 0 \"%s\"\n", parsed($0)
+	istitle = 1
+	nextline = 1
+}
+
+$1 ~ /^-/ {
+	$1 = ""
+	sub(/^[ \t]*/, "")
+	printf ".IP •\n%s\n", parsed($0)
 	nextline = 1
 }
 
