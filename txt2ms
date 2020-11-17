@@ -1,0 +1,43 @@
+#!/bin/awk -f
+
+# if someone wants to use that:
+#   ‥text‥   to print italic
+#   ‥‥text‥‥ to print bold
+# it might be better to just use \fI and \fB directly
+function parsed(a){
+	if(dontparse) return a
+	gsub(/‥‥[^‥]+‥‥/, "\\fB&\\fR", a)
+	gsub(/‥‥/, "", a)
+	gsub(/‥[^‥]+‥/, "\\fI&\\fR", a)
+	gsub(/‥/, "", a)
+	return a
+}
+
+firstheader && NR == 1 {
+	printf ".TL\n%s\n", parsed($0)
+	nextline = 1
+}
+
+$1 ~ /^#+$/ {
+	l = length($1)
+	$1 = ""
+	sub(/^[ \t]*/, "")
+	printf ".NH %d\n%s\n", l, parsed($0)
+	istitle = 1
+	nextline = 1
+}
+
+/^$/ {
+	if(istitle)
+		printf ".LP"
+	else
+		printf ".PP"
+	istitle = 0
+}
+
+{
+	if(nextline == 0)
+		print parsed($0)
+	else
+		nextline = 0
+}

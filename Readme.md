@@ -65,3 +65,36 @@ This way you can have both footnotes _and_ bibliography, which is not possible w
 	; refx <file | troff ...
 
 refx will invoke refer two times (with and without the accumulate flag).
+
+### `txt2ms` — text to troff-ms preprocessor
+
+Convert formatted text files to a troff language (-ms like).
+
+	# sample usage
+	; txt2ms <file.txt | troff -ms ...
+
+The format uses the two point glyph for special parsing of bold/italic: `‥italic‥ and ‥‥bold‥‥`.
+To disable this parsing enable the `dontparse` flag.
+Otherwise the format is markdown-like:
+
+	# sample section
+	## sample subsection
+	### sample subsubsection
+	
+	New paragraph with ‥‥bold‥‥ and ‥italic‥ text.
+	
+	Another paragraph with \fBbold\fR and \fIitalic\fR text.
+
+Keep in mind that the format only borrows from markdown.
+Many features are _not_ supported (links, ...).
+
+The converter is line oriented.
+Therefore troff content can be included where needed.
+Only empty lines and lines beginning with `#` are converted.
+
+One special feature: The script is able to use the first line as a title, allowing quick ms-flavored documents.
+To use this feature the `firstheader` variable needs to be set.
+
+Set variables like this:
+
+	; txt2ms -v 'firstheader=1' 'dontparse=1' <file.txt
