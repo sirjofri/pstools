@@ -14,8 +14,9 @@ function parsed(a){
 }
 
 BEGIN {
-	print ".de XS\n.ds LQ \"\"\n.nr |i (\\\\$1i-1i)/3u\n.ie '\\\\$1'0' .tm .XL \\\\$1 \\\\*(LQ\\\\$2\\\\*(LQ \\\\n%\n.el .tm .XL \\\\$1 \\\\*(LQ\\h'\\\\n(|iu'\\\\*(SN\\0\\0\\\\$2\\\\*(LQ \\\\n%\n.."
-	print ".de XL\n.nr |i \\\\$1\n.ta \\\\n(LLuR\n.ie \\\\$1>1 \\\n\\{\\\n\\\\$2 \\a\\|\\|\\\\$3\n.vs 15pt\n.\\}\n.el \\\n\\{\\\n\\fB\\\\$2	\\|\\|\\\\$3\\fR\n.vs 25pt\n.\\}\n.."
+	print ".de XS\n.ds LQ \"\"\n.nr |i (\\\\$1i-1i)/3u\n.ie '\\\\$1'0' .tm TOC:.XL \\\\$1 \\\\*(LQ\\\\$2\\\\*(LQ \\\\n%\n.el .tm TOC:.XL \\\\$1 \\\\*(LQ\\h'\\\\n(|iu'\\\\*(SN\\0\\0\\\\$2\\\\*(LQ \\\\n%\n.."
+	print ".tm TOC:.de XL\n.tm TOC:.nr |i \\\\\\\\$1\n.tm TOC:.ta \\\\\\\\n(LLuR\n.tm TOC:.ie \\\\\\\\$1>1 \\\\\n.tm TOC:\\\\{\\\\\n.tm TOC:\\\\\\\\$2 \\\\a\\\\|\\\\|\\\\\\\\$3\n.tm TOC:.vs 15pt\n.tm TOC:.\\\\}\n.tm TOC:.el \\\\\n.tm TOC:\\\\{\\\\\n.tm TOC:\\\\fB\\\\\\\\$2	\\\\|\\\\|\\\\\\\\$3\\\\fR\n.tm TOC:.vs 25pt\n.tm TOC:.\\\\}\n.tm TOC:.."
+	print ".tm TOC:.LP"
 }
 
 firstheader && NR == 1 {
