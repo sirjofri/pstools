@@ -102,8 +102,8 @@ Set variables like this:
 Using `txt2ms` allows the creation of tables of contents.
 The important lines are printed to stderr.
 
-	; txt2ms < file.txt | troff >[2]toc.ms
+	; txt2ms < file.txt | troff >[2] aux.file
 
-The resulting `toc.ms` file can be included in the document.
+`lib/txtmk` is an _mk_ library file and can be used to compile indexes that can be included in the source text file (with `.so file.msi`).
 
 **Note:** You need to filter the output if you have errors/warnings!

@@ -1,0 +1,8 @@
+%.msi:Q: /tmp/.aux
+	st=`{echo -n $stem | tr a-z A-Z}
+	echo '.NL' >  $target
+	echo '.LP' >> $target
+	grep '^'^$st^':' /tmp/.aux | sed 's/^'^$st^'://' >> $target
+
+/tmp/.aux:QD: $DOC
+	txt2ms $TFLAGS < $DOC | troff -ms >[2]/tmp/.aux >/dev/null || status=''

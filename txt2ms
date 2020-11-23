@@ -14,13 +14,49 @@ function parsed(a){
 }
 
 BEGIN {
-	print ".de XS\n.ds LQ \"\"\n.nr |i (\\\\$1i-1i)/3u\n.ie '\\\\$1'0' .tm TOC:.XL \\\\$1 \\\\*(LQ\\\\$2\\\\*(LQ \\\\n%\n.el .tm TOC:.XL \\\\$1 \\\\*(LQ\\h'\\\\n(|iu'\\\\*(SN\\0\\0\\\\$2\\\\*(LQ \\\\n%\n.."
-	print ".tm TOC:.de XL\n.tm TOC:.nr |i \\\\\\\\$1\n.tm TOC:.ta \\\\\\\\n(LLuR\n.tm TOC:.ie \\\\\\\\$1>1 \\\\\n.tm TOC:\\\\{\\\\\n.tm TOC:\\\\\\\\$2 \\\\a\\\\|\\\\|\\\\\\\\$3\n.tm TOC:.vs 15pt\n.tm TOC:.\\\\}\n.tm TOC:.el \\\\\n.tm TOC:\\\\{\\\\\n.tm TOC:\\\\fB\\\\\\\\$2	\\\\|\\\\|\\\\\\\\$3\\\\fR\n.tm TOC:.vs 25pt\n.tm TOC:.\\\\}\n.tm TOC:.."
+	# define global vars
+	print ".ds LQ \"\""
+	
+	# define .XS macro (table of contents)
+	print ".de XS"
+	print ".nr |i (\\\\$1i-1i)/3u"
+	print ".ie '\\\\$1'0' .tm TOC:.XL \\\\$1 \\\\*(LQ\\\\$2\\\\*(LQ \\\\n%"
+	print ".el .tm TOC:.XL \\\\$1 \\\\*(LQ\\h'\\\\n(|iu'\\\\*(SN\\0\\0\\\\$2\\\\*(LQ \\\\n%"
+	print ".."
+	
+	# define .XL macro (tables)
+	print ".tm DEF:.de XL"
+	print ".tm DEF:.nr |i \\\\\\\\$1"
+	print ".tm DEF:.ta \\\\\\\\n(LLuR"
+	print ".tm DEF:.ie \\\\\\\\$1>1 \\\\"
+	print ".tm DEF:\\\\{\\\\"
+	print ".tm DEF:\\\\\\\\$2 \\\\a\\\\|\\\\|\\\\\\\\$3"
+	print ".tm DEF:.vs 15pt"
+	print ".tm DEF:.\\\\}"
+	print ".tm DEF:.el \\\\"
+	print ".tm DEF:\\\\{\\\\"
+	print ".tm DEF:\\\\fB\\\\\\\\$2	\\\\|\\\\|\\\\\\\\$3\\\\fR"
+	print ".tm DEF:.vs 25pt"
+	print ".tm DEF:.\\\\}"
+	print ".tm DEF:.."
+
+	print ".tm TOC:.NL"
 	print ".tm TOC:.LP"
 }
 
 firstheader && NR == 1 {
 	printf ".TL\n%s\n", parsed($0)
+	nextline = 1
+}
+
+$1 ~ /^.KT$/ {
+	gsub(/"/, "", $2) # ID
+	gsub(/"/, "", $3) # Name
+	gsub(/"/, "", $4) # Title
+	keepnr[$2]++
+	printf ".tm %s:.XL 2 \\*(LQ%d\\\\0\\\\0%s\\*(LQ \\n%%\n", $2, keepnr[$2], $4
+	print  ".IP"
+	printf "\\fI%s\\ %d:\\fR\\ %s\n", $3, keepnr[$2], $4
 	nextline = 1
 }
 
