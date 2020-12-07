@@ -5,4 +5,4 @@
 	grep '^'^$st^':' /tmp/.aux | sed 's/^'^$st^'://' >> $target
 
 /tmp/.aux:QD: $DOC
-	txt2ms $TFLAGS < $DOC | troff -ms >[2]/tmp/.aux >/dev/null || status=''
+	txt2ms $TFLAGS < $DOC | troff $MACROS >[2]/tmp/.aux >/dev/null || status=''

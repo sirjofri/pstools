@@ -52,11 +52,17 @@ firstheader && NR == 1 {
 $1 ~ /^.KT$/ {
 	gsub(/"/, "", $2) # ID
 	gsub(/"/, "", $3) # Name
-	gsub(/"/, "", $4) # Title
-	keepnr[$2]++
-	printf ".tm %s:.XL 2 \\*(LQ%d\\\\0\\\\0%s\\*(LQ \\n%%\n", $2, keepnr[$2], $4
-	print  ".IP"
-	printf "\\fI%s\\ %d:\\fR\\ %s\n", $3, keepnr[$2], $4
+	tid = $2
+	tname = $3
+	$1 = ""
+	$2 = ""
+	$3 = ""
+	gsub(/^[ \t]*"?/, "", $0)
+	gsub(/"?[ \t]*$/, "", $0)
+	keepnr[tid]++
+	printf ".tm %s:.XL 2 \\*(LQ%d\\\\0\\\\0%s\\*(LQ \\n%%\n", tid, keepnr[tid], $0
+	print  ".IP \\\\*(*t \\n(*t"
+	printf "\\fI%s\\ %d:\\fR\\ \\ %s\n", tname, keepnr[tid], $0
 	nextline = 1
 }
 

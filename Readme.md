@@ -104,6 +104,15 @@ The important lines are printed to stderr.
 
 	; txt2ms < file.txt | troff >[2] aux.file
 
+`txt2ms` also introduces the `.KT` macro for keep titles.
+
+	.KT "index" "Prefix" "Title."
+
+This will typeset a keep title in the form: _Prefix 5:_ Title.
+
+Using the `*t` string and number (`.ds *t "text`, `.nr *t 10`) allows setting the indentation level and a hanging tag.
+
 `lib/txtmk` is an _mk_ library file and can be used to compile indexes that can be included in the source text file (with `.so file.msi`).
+To use the `lib/txtmk` library you should include the global `$MACROS` variable in your `mkfile` (with contents like: `-ms -mpictures`).
 
 **Note:** You need to filter the output if you have errors/warnings!
