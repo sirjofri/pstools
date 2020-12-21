@@ -35,13 +35,10 @@ BEGIN {
 	print ".tm DEF:.\\\\}"
 	print ".tm DEF:.el \\\\"
 	print ".tm DEF:\\\\{\\\\"
-	print ".tm DEF:\\\\fB\\\\\\\\$2	\\\\|\\\\|\\\\\\\\$3\\\\fR"
+	print ".tm DEF:\\\\f3\\\\\\\\$2	\\\\|\\\\|\\\\\\\\$3\\\\fR"
 	print ".tm DEF:.vs 25pt"
 	print ".tm DEF:.\\\\}"
 	print ".tm DEF:.."
-
-	print ".tm TOC:.NL"
-	print ".tm TOC:.LP"
 }
 
 firstheader && NR == 1 {
@@ -60,6 +57,7 @@ $1 ~ /^.KT$/ {
 	gsub(/^[ \t]*"?/, "", $0)
 	gsub(/"?[ \t]*$/, "", $0)
 	keepnr[tid]++
+	printf ".nr *k %s\n", keepnr[tid]
 	printf ".tm %s:.XL 2 \\*(LQ%d\\\\0\\\\0%s\\*(LQ \\n%%\n", tid, keepnr[tid], $0
 	print  ".IP \\\\*(*t \\n(*t"
 	printf "\\fI%s\\ %d:\\fR\\ \\ %s\n", tname, keepnr[tid], $0
@@ -70,7 +68,7 @@ $1 ~ /^#+$/ {
 	l = length($1)
 	$1 = ""
 	sub(/^[ \t]*/, "")
-	printf ".NH %d\n.LG\n%s\n.NL\n", l, parsed($0)
+	printf ".NH %d\n%s\n.NL\n", l, parsed($0)
 	printf ".XS %d \"%s\"\n", l, parsed($0)
 	istitle = 1
 	nextline = 1
@@ -79,8 +77,9 @@ $1 ~ /^#+$/ {
 $1 ~ /^\$+$/ {
 	$1 = ""
 	sub(/^[ \t]*/, "")
-	printf ".SH\n.LG\n%s\n.NL\n", parsed($0)
-	printf ".XS 0 \"%s\"\n", parsed($0)
+	printf ".SH\n%s\n.NL\n", parsed($0)
+	if(length($1) == 1)
+		printf ".XS 0 \"%s\"\n", parsed($0)
 	istitle = 1
 	nextline = 1
 }
