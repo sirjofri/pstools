@@ -35,7 +35,7 @@ BEGIN {
 	print ".tm DEF:.\\\\}"
 	print ".tm DEF:.el \\\\"
 	print ".tm DEF:\\\\{\\\\"
-	print ".tm DEF:\\\\f3\\\\\\\\$2	\\\\|\\\\|\\\\\\\\$3\\\\fR"
+	print ".tm DEF:\\\\f3\\\\\\\\$2	\\\\|\\\\|\\\\f3\\\\\\\\$3\\\\fR"
 	print ".tm DEF:.vs 25pt"
 	print ".tm DEF:.\\\\}"
 	print ".tm DEF:.."
@@ -75,19 +75,29 @@ $1 ~ /^#+$/ {
 }
 
 $1 ~ /^\$+$/ {
+	if(length($1) == 1)
+		intoc = 1
 	$1 = ""
 	sub(/^[ \t]*/, "")
 	printf ".SH\n%s\n.NL\n", parsed($0)
-	if(length($1) == 1)
+	if(intoc)
 		printf ".XS 0 \"%s\"\n", parsed($0)
 	istitle = 1
 	nextline = 1
+	intoc = 0
 }
 
 $1 ~ /^-/ {
 	$1 = ""
 	sub(/^[ \t]*/, "")
 	printf ".IP •\n%s\n", parsed($0)
+	nextline = 1
+}
+
+$1 ~ /^\.RR/ {
+	$1 = ""
+	sub(/^[ \t]*/, "")
+	printf ".[\n%s\n.]\n", $0
 	nextline = 1
 }
 
